@@ -81,6 +81,7 @@ export const liveOverview = {
 export const navItems = [
   { label: "Overview", href: "/dashboard" },
   { label: "Live Bereich", href: "/dashboard/live" },
+  { label: "Analytics", href: "/analytics" },
   { label: "Streams", href: "#" },
   { label: "Community", href: "#" },
   { label: "Content", href: "#" },
