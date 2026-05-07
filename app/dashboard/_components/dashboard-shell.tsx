@@ -2,10 +2,20 @@ import type { ReactNode } from "react";
 import { navItems } from "../_data";
 
 type DashboardShellProps = {
+  activeItem?: string;
   children: ReactNode;
+  eyebrow?: string;
+  summary?: string;
+  title?: string;
 };
 
-export function DashboardShell({ children }: DashboardShellProps) {
+export function DashboardShell({
+  activeItem = "Overview",
+  children,
+  eyebrow = "Mock Dashboard",
+  summary = "Letzter Stream: Freitag, 20:00 Uhr",
+  title = "Stream Uebersicht",
+}: DashboardShellProps) {
   return (
     <main className="min-h-screen bg-[#08060d] text-white">
       <div className="grid min-h-screen lg:grid-cols-[260px_1fr]">
@@ -21,17 +31,17 @@ export function DashboardShell({ children }: DashboardShellProps) {
           </div>
 
           <nav className="mt-8 grid gap-2 sm:grid-cols-4 lg:grid-cols-1">
-            {navItems.map((item, index) => (
+            {navItems.map((item) => (
               <a
-                key={item}
-                href="#"
+                key={item.label}
+                href={item.href}
                 className={`rounded-lg px-3 py-2 text-sm font-medium transition ${
-                  index === 0
+                  item.label === activeItem
                     ? "bg-[#9146ff] text-white"
                     : "text-zinc-400 hover:bg-white/10 hover:text-white"
                 }`}
               >
-                {item}
+                {item.label}
               </a>
             ))}
           </nav>
@@ -41,14 +51,14 @@ export function DashboardShell({ children }: DashboardShellProps) {
           <header className="flex flex-col gap-4 border-b border-white/10 pb-6 md:flex-row md:items-center md:justify-between">
             <div>
               <p className="text-sm font-medium text-[#c6a4ff]">
-                Mock Dashboard
+                {eyebrow}
               </p>
               <h1 className="mt-2 text-3xl font-bold sm:text-4xl">
-                Stream Uebersicht
+                {title}
               </h1>
             </div>
             <div className="rounded-lg border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-zinc-300">
-              Letzter Stream: Freitag, 20:00 Uhr
+              {summary}
             </div>
           </header>
 
