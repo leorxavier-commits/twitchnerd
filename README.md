@@ -1,36 +1,47 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TwitchNerd
 
-## Getting Started
+TwitchNerd ist ein fruehes MVP fuer ein persoenliches Twitch-Dashboard fuer den Streamer LeoNerd87.
 
-First, run the development server:
+Aktuell ist es bewusst nur eine UI mit Mockdaten. Es gibt noch keine Twitch API, kein Login und keine Datenbank.
+
+## Was hinzugefuegt wurde
+
+- Moderne Landingpage unter `/`
+- Dashboard-Seite unter `/dashboard`
+- Dunkles Twitch-inspiriertes Design
+- Responsive Layout mit Sidebar, Karten, Mock-Metriken, Balken-Chart und Aktivitaeten
+- Systemfonts statt externer Font-Downloads fuer budgetfreundliche lokale Builds
+
+## Projekt starten
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Danach im Browser oeffnen:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```text
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Wichtige Befehle
 
-## Learn More
+```bash
+npm run lint
+npm run build
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Aktuelle Einschraenkungen
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Alle Werte sind Mockdaten.
+- Es gibt keine Authentifizierung.
+- Es gibt keine Twitch-Integration.
+- Es gibt keine Datenbank oder Persistenz.
+- Es gibt noch keine shadcn/ui Komponenten im Projekt.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Naechste geplante Schritte
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Dashboard-Komponenten weiter aufteilen
+- Mock-Charts und Aktivitaeten verfeinern
+- Responsive Details testen
+- Spaeter Twitch OAuth und Twitch API serverseitig anbinden

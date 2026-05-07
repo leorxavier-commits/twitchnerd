@@ -1,65 +1,153 @@
-import Image from "next/image";
+import Link from "next/link";
+
+const highlights = [
+  {
+    label: "Live-Zuschauer",
+    value: "124",
+    detail: "+12% zum letzten Stream",
+  },
+  {
+    label: "Follower heute",
+    value: "+18",
+    detail: "Mockdaten fuer LeoNerd87",
+  },
+  {
+    label: "Chat-Aktivitaet",
+    value: "842",
+    detail: "Nachrichten im letzten Stream",
+  },
+];
+
+const features = [
+  "Stream-Metriken auf einen Blick",
+  "Mock-Charts fuer fruehe Tests",
+  "Dashboard-Struktur ohne Login",
+];
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <main className="min-h-screen overflow-hidden bg-[#08060d] text-white">
+      <section className="mx-auto flex min-h-screen w-full max-w-7xl flex-col px-5 py-6 sm:px-8 lg:px-10">
+        <nav className="flex items-center justify-between gap-4">
+          <Link href="/" className="flex items-center gap-3">
+            <span className="grid size-10 place-items-center rounded-lg bg-[#9146ff] font-black text-white">
+              TN
+            </span>
+            <span className="text-lg font-semibold tracking-normal">
+              TwitchNerd
+            </span>
+          </Link>
+
+          <Link
+            href="/dashboard"
+            className="rounded-lg border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:border-[#9146ff]/70 hover:bg-[#9146ff]/20"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            Dashboard ansehen
+          </Link>
+        </nav>
+
+        <div className="grid flex-1 items-center gap-10 py-12 lg:grid-cols-[1.05fr_0.95fr] lg:py-16">
+          <div className="max-w-3xl">
+            <p className="mb-4 inline-flex rounded-lg border border-[#9146ff]/40 bg-[#9146ff]/15 px-3 py-1 text-sm font-medium text-[#c6a4ff]">
+              MVP Dashboard fuer LeoNerd87
+            </p>
+
+            <h1 className="max-w-4xl text-4xl font-bold leading-tight sm:text-6xl lg:text-7xl">
+              Twitch-Insights, die beim Streamen nicht im Weg stehen.
+            </h1>
+
+            <p className="mt-6 max-w-2xl text-base leading-8 text-zinc-300 sm:text-lg">
+              TwitchNerd startet als schlankes Mock-Dashboard: klare Zahlen,
+              dunkles Interface und genug Struktur, um die naechsten Features
+              sauber zu testen.
+            </p>
+
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Link
+                href="/dashboard"
+                className="rounded-lg bg-[#9146ff] px-5 py-3 text-center text-sm font-semibold text-white shadow-lg shadow-[#9146ff]/25 transition hover:bg-[#7b2ff0]"
+              >
+                Dashboard oeffnen
+              </Link>
+              <a
+                href="#mockdaten"
+                className="rounded-lg border border-white/15 px-5 py-3 text-center text-sm font-semibold text-zinc-100 transition hover:border-white/30 hover:bg-white/10"
+              >
+                Mockdaten ansehen
+              </a>
+            </div>
+
+            <div className="mt-8 flex flex-wrap gap-3 text-sm text-zinc-300">
+              {features.map((feature) => (
+                <span
+                  key={feature}
+                  className="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2"
+                >
+                  {feature}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div
+            id="mockdaten"
+            className="rounded-2xl border border-white/10 bg-zinc-950/80 p-4 shadow-2xl shadow-[#9146ff]/15 sm:p-5"
           >
-            Documentation
-          </a>
+            <div className="mb-5 flex items-center justify-between gap-4">
+              <div>
+                <p className="text-sm text-zinc-400">Stream Preview</p>
+                <h2 className="text-xl font-semibold">LeoNerd87 Stats</h2>
+              </div>
+              <span className="rounded-full bg-emerald-400/15 px-3 py-1 text-xs font-semibold text-emerald-300">
+                Mock Live
+              </span>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-3">
+              {highlights.map((item) => (
+                <div
+                  key={item.label}
+                  className="rounded-xl border border-white/10 bg-white/[0.04] p-4"
+                >
+                  <p className="text-sm text-zinc-400">{item.label}</p>
+                  <p className="mt-3 text-3xl font-bold text-white">
+                    {item.value}
+                  </p>
+                  <p className="mt-2 text-xs leading-5 text-zinc-500">
+                    {item.detail}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-4 rounded-xl border border-white/10 bg-[#120d1d] p-4">
+              <div className="mb-4 flex items-center justify-between">
+                <p className="font-medium">Aktivitaet pro Stunde</p>
+                <p className="text-sm text-zinc-500">Demo</p>
+              </div>
+              <div className="flex h-40 items-end gap-2">
+                {[38, 52, 46, 70, 58, 82, 66, 94, 74, 88, 62, 76].map(
+                  (height, index) => (
+                    <div
+                      key={`${height}-${index}`}
+                      className="flex flex-1 items-end rounded-t-md bg-[#9146ff]/20"
+                      style={{ height: `${height}%` }}
+                    >
+                      <span className="h-full w-full rounded-t-md bg-gradient-to-t from-[#9146ff] to-[#00f5d4]" />
+                    </div>
+                  ),
+                )}
+              </div>
+            </div>
+          </div>
         </div>
-      </main>
-    </div>
+
+        <div className="grid gap-4 border-t border-white/10 py-5 text-sm text-zinc-400 sm:grid-cols-3">
+          <p>Keine API. Kein Login. Keine Datenbank.</p>
+          <p>Gebaut fuer schnelle lokale MVP-Iteration.</p>
+          <p className="sm:text-right">Naechster Schritt: Dashboard-Details.</p>
+        </div>
+      </section>
+    </main>
   );
 }
