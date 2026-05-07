@@ -4,7 +4,7 @@ TwitchNerd ist ein frühes MVP für ein ruhiges Creator Dashboard für den Strea
 
 Leitsatz: **Wir helfen dir, gesünder mit deinen Zahlen umzugehen.**
 
-Aktuell ist es bewusst ein frühes MVP. Es gibt Twitch OAuth, echte Live-Basisdaten und echte Followerdaten, aber noch keine Datenbank.
+Aktuell ist es bewusst ein frühes MVP. Es gibt Twitch OAuth, echte Live-Basisdaten, echte Followerdaten und eine ehrliche Entwicklungsseite mit Twitch-Daten, wo Helix sie bereitstellt, aber noch keine Datenbank.
 
 TwitchNerd priorisiert ruhige, unterstützende Creator-Analytics statt hektischer Zahlenvergleiche. API Phase 1 ergänzt nur Twitch OAuth Login, echte Twitch-Basisdaten und Community/Followerdaten für den verbundenen Account. Wenn keine Twitch-Daten verfügbar sind, zeigt TwitchNerd klare Hinweise statt echte Daten vorzutäuschen.
 
@@ -19,6 +19,7 @@ TwitchNerd priorisiert ruhige, unterstützende Creator-Analytics statt hektische
 - Responsive Layout mit ruhigen Karten, Beispiel-Metriken, Balken-Charts und Aktivitäten
 - Content-Einordnung mit Beispieldaten
 - Community-Seite mit echten Twitch-Followerdaten und Unterstützern, wenn die passenden Scopes vorhanden sind
+- Einordnungsseite mit echten Follow-, Subscriber-, Live-Stream- und optionalen Bits-Daten, ohne nicht verfügbare Twitch-Analytics zu erfinden
 - Platzhalter-Zähler für spätere Chat- und Emote-Auswertungen ohne Chat-Logs oder Nachrichteninhalte
 - Twitch OAuth Authorization Code Flow für Basisdaten im Live-Bereich
 - LIVE-Bereich mit 30-Sekunden-Refresh, laufendem Streamtimer aus `started_at`, Kategorie-Suche und ruhigem Twitch-API-Error-Handling
@@ -33,7 +34,7 @@ APP_URL=http://localhost:3000
 TWITCH_CLIENT_ID=your_twitch_client_id
 TWITCH_CLIENT_SECRET=your_twitch_client_secret
 TWITCH_REDIRECT_URI=http://localhost:3000/api/auth/twitch/callback
-TWITCH_OAUTH_SCOPES=channel:manage:broadcast moderator:read:followers channel:read:subscriptions channel:read:vips moderation:read
+TWITCH_OAUTH_SCOPES=channel:manage:broadcast moderator:read:followers channel:read:subscriptions channel:read:vips moderation:read bits:read
 ```
 
 In der Twitch Developer Console:
@@ -42,7 +43,7 @@ In der Twitch Developer Console:
 - OAuth Redirect URL exakt auf `http://localhost:3000/api/auth/twitch/callback` setzen
 - Client ID und Client Secret in `.env.local` eintragen
 
-Für das Ändern von Streamtitel und Kategorie wird der Scope `channel:manage:broadcast` benötigt. Für konkrete Follower-Listen mit Namen und Follow-Datum wird `moderator:read:followers` benötigt. Für Subscriberstatus und Tier wird `channel:read:subscriptions` benötigt. Für Rollen werden `channel:read:vips` und `moderation:read` genutzt. Wenn du Scopes nachträglich ergänzt, musst du dich über TwitchNerd neu mit Twitch einloggen, damit Twitch einen Token mit den neuen Scopes ausstellt.
+Für das Ändern von Streamtitel und Kategorie wird der Scope `channel:manage:broadcast` benötigt. Für konkrete Follower-Listen mit Namen und Follow-Datum wird `moderator:read:followers` benötigt. Für Subscriberstatus und Tier wird `channel:read:subscriptions` benötigt. Für Rollen werden `channel:read:vips` und `moderation:read` genutzt. Für den optionalen Bits-Zeitraum auf der Einordnungsseite wird `bits:read` genutzt. Wenn du Scopes nachträglich ergänzt, musst du dich über TwitchNerd neu mit Twitch einloggen, damit Twitch einen Token mit den neuen Scopes ausstellt.
 
 TwitchNerd lädt live/offline, aktuelle Viewer und `started_at` über `Get Streams`. Viewer werden bewusst als ein Signal unter mehreren behandelt. Titel und Kategorie werden über `Get Channel Information` geladen. Änderungen an Titel und Kategorie laufen serverseitig über `Modify Channel Information`.
 
@@ -53,6 +54,8 @@ Der LIVE Activity Feed nutzt aktuell echte Follows über `Get Channel Followers`
 Die Community-Seite lädt Follower serverseitig über `Get Channel Followers` (`GET /helix/channels/followers`) und nutzt Twitch Pagination. Subscriber werden über `Get Broadcaster Subscriptions` (`GET /helix/subscriptions`) ergänzt. VIPs und Moderatoren werden über `Get VIPs` und `Get Moderators` markiert, wenn die Scopes verfügbar sind. Angezeigt werden Username, folgt seit, Subscriber ja/nein, Sub Tier, Gift-Sub-Hinweis, abonniert seit und Rolle.
 
 Hinweis: Twitchs Broadcaster Subscriptions API liefert Substatus, Tier und Gift-Status, aber kein verlässliches Abo-Startdatum. Ohne EventSub oder Datenbank zeigt TwitchNerd deshalb bei "abonniert seit" bewusst "Nicht verfügbar" statt einen Wert zu erfinden.
+
+Die Einordnungsseite nutzt echte Twitch-Daten nur dort, wo Helix sie für Creator-Kanäle bereitstellt: aktuelle Live-Begleitung und `started_at` über `Get Streams`, neue Follows über `Get Channel Followers`, aktuelle Subscriber über `Get Broadcaster Subscriptions` und optional Bits über `Get Bits Leaderboard`. Bits werden nur für Twitchs unterstützte Leaderboard-Zeiträume Tag, Woche, Monat und Jahr angezeigt, nicht für freie Zeiträume wie rollierende 30 Tage oder Quartal. Twitchs öffentliche Analytics-Endpunkte sind für Extensions und Games gedacht; historische Creator-Werte wie durchschnittliche Viewer, Peaks, Streamstunden und Einnahmen werden deshalb klar als "Nicht verfügbar" gekennzeichnet statt als Mockdaten getarnt.
 
 Der Refresh Token wird beim OAuth Callback als httpOnly Cookie gespeichert. Wenn der Access Token abgelaufen ist, erneuern die serverseitigen Twitch-Routen den Token automatisch über den Refresh Token und schreiben die neuen Token-Cookies. Tokens werden nicht im Client gelesen und nicht geloggt.
 - Systemfonts statt externer Font-Downloads für budgetfreundliche lokale Builds
@@ -82,7 +85,7 @@ npm run build
 - Bei Twitch-API-Fehlern werden keine Mockdaten als echte Live-Daten angezeigt; der LIVE-Bereich zeigt stattdessen verständliche Hinweise.
 - Bei Twitch-API-Fehlern werden keine Mockdaten als echte Community-Daten angezeigt; die Community-Seite zeigt stattdessen verständliche Hinweise.
 - Es gibt nur Twitch OAuth für Basisdaten, Channel Control und Followerdaten.
-- Es gibt keine echte Bits-, Raid-, Channel-Points-Historie, Einordnungsdaten aus Analytics-APIs, Chat-Zähler-, Emote-Zähler-, Chat-Log- oder EventSub-Integration.
+- Es gibt keine echte Raid-, Channel-Points-Historie, Creator-Analytics-Zeitreihen, Chat-Zähler-, Emote-Zähler-, Chat-Log- oder EventSub-Integration.
 - Es gibt keine Datenbank oder Persistenz.
 - Es gibt noch keine shadcn/ui Komponenten im Projekt.
 

@@ -3,7 +3,7 @@ import { getAuthCookieNames, getTwitchConfig } from "../../../../../lib/twitch";
 
 export function GET() {
   const config = getTwitchConfig();
-  const response = NextResponse.redirect(new URL("/dashboard/live", config.appUrl));
+  const response = NextResponse.redirect(new URL("/", config.appUrl));
   const cookieNames = getAuthCookieNames();
 
   response.cookies.delete(cookieNames.accessToken);

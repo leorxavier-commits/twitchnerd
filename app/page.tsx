@@ -19,9 +19,9 @@ const highlights = [
 ];
 
 const features = [
+  "Login mit Twitch erforderlich",
   "Ruhige Einordnung statt Zahlendruck",
   "Creator Cockpit für Live, Community und Entwicklung",
-  "Bewusst schlank für lokale MVP-Tests",
 ];
 
 export default function Home() {
@@ -42,13 +42,13 @@ export default function Home() {
             href="/dashboard"
             className="rounded-lg border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:border-[#9146ff]/70 hover:bg-[#9146ff]/20"
           >
-            Cockpit ansehen
+            Geschütztes Cockpit
           </Link>
         </nav>
 
         <div className="grid flex-1 items-center gap-10 py-12 lg:grid-cols-[1.05fr_0.95fr] lg:py-16">
           <div className="max-w-3xl">
-              <p className="mb-4 inline-flex rounded-lg border border-[#9146ff]/40 bg-[#9146ff]/15 px-3 py-1 text-sm font-medium text-[#c6a4ff]">
+            <p className="mb-4 inline-flex rounded-lg border border-[#9146ff]/40 bg-[#9146ff]/15 px-3 py-1 text-sm font-medium text-[#c6a4ff]">
               Ruhiges Creator Cockpit für LeoNerd87
             </p>
 
@@ -62,19 +62,20 @@ export default function Home() {
               so einordnet, dass du streamen kannst, ohne dich von Zahlen jagen
               zu lassen.
             </p>
+            <p className="mt-4 max-w-2xl text-sm leading-6 text-zinc-500">
+              Die Creator-Bereiche sind geschützt. Melde dich mit Twitch an, um
+              dein persönliches Dashboard zu öffnen.
+            </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link
-                href="/dashboard"
-                className="rounded-lg bg-[#9146ff] px-5 py-3 text-center text-sm font-semibold text-white shadow-lg shadow-[#9146ff]/25 transition hover:bg-[#7b2ff0]"
-              >
-                Cockpit öffnen
-              </Link>
               <a
                 href="/api/auth/twitch/login"
-                className="rounded-lg border border-[#9146ff]/50 bg-[#9146ff]/15 px-5 py-3 text-center text-sm font-semibold text-[#d9c5ff] transition hover:bg-[#9146ff]/25"
+                className="inline-flex items-center justify-center gap-3 rounded-lg border border-[#9146ff]/45 bg-[#9146ff]/15 px-5 py-3 text-center text-sm font-semibold text-[#efe7ff] shadow-lg shadow-[#9146ff]/10 transition hover:border-[#9146ff]/70 hover:bg-[#9146ff]/22"
               >
-                Mit Twitch einloggen
+                <span className="grid size-6 place-items-center rounded-md bg-[#9146ff] text-xs font-black text-white">
+                  T
+                </span>
+                Mit Twitch anmelden
               </a>
               <a
                 href="#mockdaten"

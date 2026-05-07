@@ -83,6 +83,46 @@ export type TwitchCommunityData = {
   totalSubscribers: number | null;
 };
 
+export type TwitchDevelopmentPeriod =
+  | "30d"
+  | "7d"
+  | "month"
+  | "quarter"
+  | "today"
+  | "year";
+
+export type TwitchDevelopmentKpi = {
+  detail: string;
+  estimated?: boolean;
+  label: string;
+  source: "twitch" | "unavailable";
+  tone: string;
+  value: string;
+};
+
+export type TwitchDevelopmentChart = {
+  bars: number[];
+  description: string;
+  source: "twitch" | "unavailable";
+  summary: string;
+  title: string;
+};
+
+export type TwitchDevelopmentAvailability = {
+  label: string;
+  note: string;
+  status: "available" | "limited" | "unavailable";
+};
+
+export type TwitchDevelopmentData = {
+  availability: TwitchDevelopmentAvailability[];
+  charts: TwitchDevelopmentChart[];
+  error: string | null;
+  kpis: TwitchDevelopmentKpi[];
+  period: TwitchDevelopmentPeriod;
+  periodLabel: string;
+};
+
 type TwitchTokenResponse = {
   access_token: string;
   expires_in: number;
@@ -165,6 +205,28 @@ type TwitchRoleUsersResponse = {
   pagination: {
     cursor?: string;
   };
+};
+
+type TwitchBitsLeaderboardResponse = {
+  data: Array<{
+    rank: number;
+    score: number;
+    user_id: string;
+    user_login: string;
+    user_name: string;
+  }>;
+  date_range: {
+    ended_at: string;
+    started_at: string;
+  };
+  total: number;
+};
+
+type TwitchBitsLeaderboardResult = {
+  bits: number | null;
+  error: string | null;
+  rankedUsers: number | null;
+  unavailableReason: string | null;
 };
 
 type TwitchApiError = {
@@ -564,6 +626,214 @@ export async function getTwitchCommunityData(): Promise<TwitchCommunityData> {
       source: "twitch",
       totalFollowers: null,
       totalSubscribers: null,
+    };
+  }
+}
+
+export async function getTwitchDevelopmentData(
+  period: TwitchDevelopmentPeriod,
+): Promise<TwitchDevelopmentData> {
+  const auth = await getTwitchAuthContext({ allowTokenRefresh: false });
+  const range = getDevelopmentDateRange(period);
+  const unavailable = "Nicht verfügbar";
+
+  if (!auth.accessToken || !auth.clientId) {
+    return {
+      availability: createDevelopmentAvailability(false, false, false),
+      charts: createDevelopmentCharts([], range.label),
+      error:
+        auth.error ??
+        "Verbinde Twitch erneut, um echte Entwicklungsdaten zu laden.",
+      kpis: [
+        createDevelopmentKpi(
+          "Durchschnittliche Begleitung",
+          unavailable,
+          "Twitch stellt historische Average-Viewer nicht über Helix bereit.",
+          "unavailable",
+          "text-zinc-400",
+        ),
+        createDevelopmentKpi(
+          "Stärkster gemeinsamer Moment",
+          unavailable,
+          "Historische Spitzenwerte sind ohne Speicherung nicht abrufbar.",
+          "unavailable",
+          "text-zinc-400",
+        ),
+        createDevelopmentKpi(
+          "Streamstunden",
+          unavailable,
+          "Historische Streamdauer ist ohne Analytics-Export oder Speicherung nicht verfügbar.",
+          "unavailable",
+          "text-zinc-400",
+        ),
+        createDevelopmentKpi(
+          "Neue Verbindungen",
+          unavailable,
+          "Followerdaten benötigen einen gültigen Twitch Login.",
+          "unavailable",
+          "text-zinc-400",
+        ),
+        createDevelopmentKpi(
+          "Unterstützer",
+          unavailable,
+          "Subscriberdaten benötigen einen gültigen Twitch Login.",
+          "unavailable",
+          "text-zinc-400",
+        ),
+        createDevelopmentKpi(
+          "Geschätzte Einnahmen",
+          unavailable,
+          "Twitch stellt keine Creator-Einnahmen über Helix bereit.",
+          "unavailable",
+          "text-zinc-400",
+          true,
+        ),
+      ],
+      period,
+      periodLabel: range.label,
+    };
+  }
+
+  try {
+    const user = await fetchTwitchUser(auth.accessToken, auth.clientId);
+    const [stream, followers, subscriptions, bits] = await Promise.all([
+      fetchTwitchStream(auth.accessToken, auth.clientId, user.id),
+      fetchTwitchFollowers(auth.accessToken, auth.clientId, user.id),
+      fetchOptionalTwitchSubscriptions(auth.accessToken, auth.clientId, user.id),
+      fetchOptionalTwitchBits(auth.accessToken, auth.clientId, range),
+    ]);
+    const followersInRange = followers.followers.filter((follower) =>
+      isInDateRange(follower.followedAt, range.startedAt, range.endedAt),
+    );
+    const currentDuration = stream.startedAt
+      ? formatHoursSince(stream.startedAt)
+      : null;
+    const hasFollowerData = followers.followers.length > 0 || followers.total === 0;
+    const hasSubscriberData = subscriptions.total !== null;
+    const hasBitsData = bits.bits !== null;
+
+    return {
+      availability: createDevelopmentAvailability(
+        hasFollowerData,
+        hasSubscriberData,
+        hasBitsData,
+      ),
+      charts: createDevelopmentCharts(followersInRange, range.label),
+      error: [subscriptions.error, bits.error].filter(Boolean).join(" ") || null,
+      kpis: [
+        createDevelopmentKpi(
+          "Durchschnittliche Begleitung",
+          unavailable,
+          "Twitch Helix liefert keinen historischen Average-Viewer-Wert für Creator-Kanäle.",
+          "unavailable",
+          "text-zinc-400",
+        ),
+        createDevelopmentKpi(
+          "Aktuelle Begleitung",
+          stream.isLive ? stream.viewerCount.toLocaleString("de-DE") : unavailable,
+          stream.isLive
+            ? "Live-Snapshot aus Twitch. Kein historischer Spitzenwert."
+            : "Der Kanal ist gerade offline; historische Spitzenwerte liefert Helix nicht.",
+          stream.isLive ? "twitch" : "unavailable",
+          stream.isLive ? "text-[#c6a4ff]" : "text-zinc-400",
+        ),
+        createDevelopmentKpi(
+          "Streamzeit jetzt",
+          currentDuration ?? unavailable,
+          currentDuration
+            ? "Aus Twitch started_at des laufenden Streams berechnet."
+            : "Historische Streamstunden sind ohne Speicherung nicht verfügbar.",
+          currentDuration ? "twitch" : "unavailable",
+          currentDuration ? "text-[#f5d742]" : "text-zinc-400",
+        ),
+        createDevelopmentKpi(
+          "Neue Verbindungen",
+          followersInRange.length.toLocaleString("de-DE"),
+          `Follower mit Follow-Datum im Zeitraum ${range.label}.`,
+          "twitch",
+          "text-[#d9c5ff]",
+        ),
+        createDevelopmentKpi(
+          "Unterstützer",
+          subscriptions.total?.toLocaleString("de-DE") ?? unavailable,
+          subscriptions.total === null
+            ? "Benötigt channel:read:subscriptions und einen berechtigten Kanal."
+            : "Aktuelle Subscriber aus Twitch Broadcaster Subscriptions.",
+          subscriptions.total === null ? "unavailable" : "twitch",
+          subscriptions.total === null ? "text-zinc-400" : "text-[#c6a4ff]",
+        ),
+        createDevelopmentKpi(
+          "Geschätzte Einnahmen",
+          unavailable,
+          bits.bits === null
+            ? bits.unavailableReason ??
+              "Twitch stellt keine Creator-Einnahmen über Helix bereit. Bits benötigen optional bits:read."
+            : `${bits.bits.toLocaleString(
+                "de-DE",
+              )} Bits im Twitch Leaderboard-Zeitraum sichtbar; Einnahmen werden bewusst nicht geschätzt.`,
+          "unavailable",
+          "text-zinc-400",
+          true,
+        ),
+      ],
+      period,
+      periodLabel: range.label,
+    };
+  } catch (error) {
+    logTwitchError("development-data", error);
+
+    return {
+      availability: createDevelopmentAvailability(false, false, false),
+      charts: createDevelopmentCharts([], range.label),
+      error:
+        "Entwicklungsdaten konnten gerade nicht geladen werden. Bitte Login, Scopes und Twitch-Verfügbarkeit prüfen.",
+      kpis: [
+        createDevelopmentKpi(
+          "Durchschnittliche Begleitung",
+          unavailable,
+          "Nicht geladen.",
+          "unavailable",
+          "text-zinc-400",
+        ),
+        createDevelopmentKpi(
+          "Aktuelle Begleitung",
+          unavailable,
+          "Nicht geladen.",
+          "unavailable",
+          "text-zinc-400",
+        ),
+        createDevelopmentKpi(
+          "Streamzeit jetzt",
+          unavailable,
+          "Nicht geladen.",
+          "unavailable",
+          "text-zinc-400",
+        ),
+        createDevelopmentKpi(
+          "Neue Verbindungen",
+          unavailable,
+          "Nicht geladen.",
+          "unavailable",
+          "text-zinc-400",
+        ),
+        createDevelopmentKpi(
+          "Unterstützer",
+          unavailable,
+          "Nicht geladen.",
+          "unavailable",
+          "text-zinc-400",
+        ),
+        createDevelopmentKpi(
+          "Geschätzte Einnahmen",
+          unavailable,
+          "Nicht geladen.",
+          "unavailable",
+          "text-zinc-400",
+          true,
+        ),
+      ],
+      period,
+      periodLabel: range.label,
     };
   }
 }
@@ -1018,6 +1288,251 @@ function createPreparedLiveActivityEvents(): TwitchActivityEvent[] {
       username: "NerdFan42",
     },
   ];
+}
+
+async function fetchOptionalTwitchBits(
+  accessToken: string,
+  clientId: string,
+  range: ReturnType<typeof getDevelopmentDateRange>,
+): Promise<TwitchBitsLeaderboardResult> {
+  const bitsWindow = getBitsLeaderboardWindow(range.period);
+
+  if (!bitsWindow) {
+    return {
+      bits: null,
+      error: null,
+      rankedUsers: null,
+      unavailableReason:
+        "Bits Leaderboard unterstützt nur Tag, Woche, Monat oder Jahr; dieser Zeitraum wird nicht geschätzt.",
+    };
+  }
+
+  try {
+    const params = new URLSearchParams({
+      count: "100",
+      period: bitsWindow.period,
+      started_at: range.startedAt.toISOString(),
+    });
+    const response = await fetch(`${TWITCH_API_URL}/bits/leaderboard?${params}`, {
+      cache: "no-store",
+      headers: createTwitchHeaders(accessToken, clientId),
+    });
+
+    if (!response.ok) {
+      throw await createTwitchRequestError("Get Bits Leaderboard", response);
+    }
+
+    const payload = (await response.json()) as TwitchBitsLeaderboardResponse;
+    const bits = payload.data.reduce((sum, entry) => sum + entry.score, 0);
+
+    return {
+      bits,
+      error: null,
+      rankedUsers: payload.total,
+      unavailableReason: null,
+    };
+  } catch (error) {
+    logTwitchError("development-bits", error);
+
+    return {
+      bits: null,
+      error:
+        "Bits konnten nicht geladen werden. Dafür wird optional der Scope bits:read benötigt.",
+      rankedUsers: null,
+      unavailableReason: null,
+    };
+  }
+}
+
+function getDevelopmentDateRange(period: TwitchDevelopmentPeriod) {
+  const now = new Date();
+  const endedAt = now;
+  const startedAt = new Date(now);
+
+  if (period === "today") {
+    startedAt.setHours(0, 0, 0, 0);
+    return { endedAt, label: "Heute", period, startedAt };
+  }
+
+  if (period === "7d") {
+    startedAt.setDate(startedAt.getDate() - 7);
+    return { endedAt, label: "7 Tage", period, startedAt };
+  }
+
+  if (period === "month") {
+    startedAt.setDate(1);
+    startedAt.setHours(0, 0, 0, 0);
+    return { endedAt, label: "Monat", period, startedAt };
+  }
+
+  if (period === "quarter") {
+    startedAt.setMonth(startedAt.getMonth() - 3);
+    return { endedAt, label: "Quartal", period, startedAt };
+  }
+
+  if (period === "year") {
+    startedAt.setFullYear(startedAt.getFullYear() - 1);
+    return { endedAt, label: "Jahr", period, startedAt };
+  }
+
+  startedAt.setDate(startedAt.getDate() - 30);
+  return { endedAt, label: "30 Tage", period, startedAt };
+}
+
+function getBitsLeaderboardWindow(period: TwitchDevelopmentPeriod) {
+  if (period === "today") {
+    return { period: "day" };
+  }
+
+  if (period === "7d") {
+    return { period: "week" };
+  }
+
+  if (period === "month") {
+    return { period: "month" };
+  }
+
+  if (period === "year") {
+    return { period: "year" };
+  }
+
+  return null;
+}
+
+function createDevelopmentKpi(
+  label: string,
+  value: string,
+  detail: string,
+  source: TwitchDevelopmentKpi["source"],
+  tone: string,
+  estimated = false,
+): TwitchDevelopmentKpi {
+  return {
+    detail,
+    estimated,
+    label,
+    source,
+    tone,
+    value,
+  };
+}
+
+function createDevelopmentCharts(
+  followers: TwitchFollower[],
+  periodLabel: string,
+): TwitchDevelopmentChart[] {
+  const bars = createFollowerBars(followers);
+
+  return [
+    {
+      bars,
+      description:
+        "Neue Follows aus Twitch Helix, nach Follow-Datum im gewählten Zeitraum gruppiert.",
+      source: bars.some((bar) => bar > 0) ? "twitch" : "unavailable",
+      summary:
+        bars.some((bar) => bar > 0)
+          ? `Echte neue Verbindungen im Zeitraum ${periodLabel}.`
+          : `Für ${periodLabel} wurden keine neuen Follows gefunden oder der Scope fehlt.`,
+      title: "Neue Verbindungen im Verlauf",
+    },
+    {
+      bars: [],
+      description:
+        "Historische Average Viewer, Peaks und Streamstunden stellt Twitch Helix für Creator-Kanäle nicht bereit.",
+      source: "unavailable",
+      summary:
+        "Diese Werte brauchen später Analytics-Exports oder eigene Speicherung.",
+      title: "Begleitung und Streamzeit",
+    },
+  ];
+}
+
+function createDevelopmentAvailability(
+  hasFollowerData: boolean,
+  hasSubscriberData: boolean,
+  hasBitsData: boolean,
+): TwitchDevelopmentAvailability[] {
+  return [
+    {
+      label: "Follower",
+      note: hasFollowerData
+        ? "Echte Follow-Daten mit Zeitstempel verfügbar."
+        : "Benötigt moderator:read:followers.",
+      status: hasFollowerData ? "available" : "limited",
+    },
+    {
+      label: "Subscriber",
+      note: hasSubscriberData
+        ? "Aktuelle Subscriber und Tier verfügbar."
+        : "Benötigt channel:read:subscriptions und einen berechtigten Kanal.",
+      status: hasSubscriberData ? "available" : "limited",
+    },
+    {
+      label: "Bits",
+      note: hasBitsData
+        ? "Bits-Summe aus dem Twitch Leaderboard verfügbar; keine Einnahmenschätzung."
+        : "Optional mit bits:read und nur für Tag, Woche, Monat oder Jahr exakt verfügbar.",
+      status: hasBitsData ? "available" : "limited",
+    },
+    {
+      label: "Historische Stream-Analytics",
+      note: "Average Viewer, Peaks, Streamstunden und Einnahmen sind über Helix nicht als Creator-Analytics verfügbar.",
+      status: "unavailable",
+    },
+  ];
+}
+
+function createFollowerBars(followers: TwitchFollower[]) {
+  const bucketCount = 10;
+  const buckets = Array.from({ length: bucketCount }, () => 0);
+
+  if (followers.length === 0) {
+    return buckets;
+  }
+
+  const sortedFollowers = followers.toSorted(
+    (first, second) =>
+      new Date(first.followedAt).getTime() - new Date(second.followedAt).getTime(),
+  );
+  const firstTime = new Date(sortedFollowers[0].followedAt).getTime();
+  const lastTime = new Date(
+    sortedFollowers[sortedFollowers.length - 1].followedAt,
+  ).getTime();
+  const span = Math.max(1, lastTime - firstTime);
+
+  for (const follower of sortedFollowers) {
+    const position = Math.min(
+      bucketCount - 1,
+      Math.floor(
+        ((new Date(follower.followedAt).getTime() - firstTime) / span) *
+          bucketCount,
+      ),
+    );
+
+    buckets[position] += 1;
+  }
+
+  const max = Math.max(...buckets);
+
+  return buckets.map((bucket) => (max > 0 ? Math.max(8, (bucket / max) * 100) : 0));
+}
+
+function formatHoursSince(value: string) {
+  const hours = Math.max(
+    0,
+    (Date.now() - new Date(value).getTime()) / (1000 * 60 * 60),
+  );
+
+  return `${hours.toLocaleString("de-DE", {
+    maximumFractionDigits: 1,
+    minimumFractionDigits: 1,
+  })} h`;
+}
+
+function isInDateRange(value: string, startedAt: Date, endedAt: Date) {
+  const time = new Date(value).getTime();
+
+  return time >= startedAt.getTime() && time <= endedAt.getTime();
 }
 
 async function fetchOptionalTwitchSubscriptions(
