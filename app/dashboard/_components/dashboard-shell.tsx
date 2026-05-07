@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { ReactNode } from "react";
 import { navItems } from "../_data";
 
@@ -20,7 +21,10 @@ export function DashboardShell({
     <main className="min-h-screen bg-[#08060d] text-white">
       <div className="grid min-h-screen lg:grid-cols-[260px_1fr]">
         <aside className="border-b border-white/10 bg-zinc-950/90 p-5 lg:border-b-0 lg:border-r">
-          <div className="flex items-center gap-3">
+          <Link
+            href="/"
+            className="flex items-center gap-3 rounded-lg transition hover:opacity-85"
+          >
             <span className="grid size-10 place-items-center rounded-lg bg-[#9146ff] font-black">
               TN
             </span>
@@ -28,7 +32,7 @@ export function DashboardShell({
               <p className="font-semibold">TwitchNerd</p>
               <p className="text-sm text-zinc-500">LeoNerd87</p>
             </div>
-          </div>
+          </Link>
 
           <nav className="mt-8 grid gap-2 sm:grid-cols-4 lg:grid-cols-1">
             {navItems.map((item) => (
