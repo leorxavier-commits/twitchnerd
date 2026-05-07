@@ -2,26 +2,26 @@ import Link from "next/link";
 
 const highlights = [
   {
-    label: "Live-Zuschauer",
+    label: "Gerade im Stream",
     value: "124",
-    detail: "+12% zum letzten Stream",
+    detail: "Ein Signal, nicht dein Wert als Creator",
   },
   {
-    label: "Follower heute",
+    label: "Neue Verbindungen",
     value: "+18",
-    detail: "Mockdaten für LeoNerd87",
+    detail: "Menschen, die wiederkommen möchten",
   },
   {
-    label: "Chat-Aktivität",
+    label: "Community-Momente",
     value: "842",
-    detail: "Nachrichten im letzten Stream",
+    detail: "Austausch im letzten Stream",
   },
 ];
 
 const features = [
-  "Stream-Metriken auf einen Blick",
-  "Mock-Charts für frühe Tests",
-  "Dashboard-Struktur ohne Login",
+  "Ruhige Einordnung statt Zahlendruck",
+  "Creator Cockpit für Live, Community und Entwicklung",
+  "Bewusst schlank für lokale MVP-Tests",
 ];
 
 export default function Home() {
@@ -42,24 +42,25 @@ export default function Home() {
             href="/dashboard"
             className="rounded-lg border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:border-[#9146ff]/70 hover:bg-[#9146ff]/20"
           >
-            Dashboard ansehen
+            Cockpit ansehen
           </Link>
         </nav>
 
         <div className="grid flex-1 items-center gap-10 py-12 lg:grid-cols-[1.05fr_0.95fr] lg:py-16">
           <div className="max-w-3xl">
-            <p className="mb-4 inline-flex rounded-lg border border-[#9146ff]/40 bg-[#9146ff]/15 px-3 py-1 text-sm font-medium text-[#c6a4ff]">
-              MVP Dashboard für LeoNerd87
+              <p className="mb-4 inline-flex rounded-lg border border-[#9146ff]/40 bg-[#9146ff]/15 px-3 py-1 text-sm font-medium text-[#c6a4ff]">
+              Ruhiges Creator Cockpit für LeoNerd87
             </p>
 
             <h1 className="max-w-4xl text-4xl font-bold leading-tight sm:text-6xl lg:text-7xl">
-              Twitch-Insights, die beim Streamen nicht im Weg stehen.
+              Wir helfen dir, gesünder mit deinen Zahlen umzugehen.
             </h1>
 
             <p className="mt-6 max-w-2xl text-base leading-8 text-zinc-300 sm:text-lg">
-              TwitchNerd startet als schlankes Mock-Dashboard: klare Zahlen,
-              dunkles Interface und genug Struktur, um die nächsten Features
-              sauber zu testen.
+              TwitchNerd ist kein hektisches Analytics-Tool. Es ist ein ruhiges
+              Creator Cockpit, das Live-Daten, Community-Signale und Entwicklung
+              so einordnet, dass du streamen kannst, ohne dich von Zahlen jagen
+              zu lassen.
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -67,7 +68,7 @@ export default function Home() {
                 href="/dashboard"
                 className="rounded-lg bg-[#9146ff] px-5 py-3 text-center text-sm font-semibold text-white shadow-lg shadow-[#9146ff]/25 transition hover:bg-[#7b2ff0]"
               >
-                Dashboard öffnen
+                Cockpit öffnen
               </Link>
               <a
                 href="/api/auth/twitch/login"
@@ -79,7 +80,7 @@ export default function Home() {
                 href="#mockdaten"
                 className="rounded-lg border border-white/15 px-5 py-3 text-center text-sm font-semibold text-zinc-100 transition hover:border-white/30 hover:bg-white/10"
               >
-                Mockdaten ansehen
+                Beispielansicht ansehen
               </a>
             </div>
 
@@ -101,11 +102,11 @@ export default function Home() {
           >
             <div className="mb-5 flex items-center justify-between gap-4">
               <div>
-                <p className="text-sm text-zinc-400">Stream Preview</p>
-                <h2 className="text-xl font-semibold">LeoNerd87 Stats</h2>
+                <p className="text-sm text-zinc-400">Ruhige Übersicht</p>
+                <h2 className="text-xl font-semibold">LeoNerd87 Cockpit</h2>
               </div>
               <span className="rounded-full bg-emerald-400/15 px-3 py-1 text-xs font-semibold text-emerald-300">
-                Mock Live
+                Beispiel Live
               </span>
             </div>
 
@@ -128,7 +129,7 @@ export default function Home() {
 
             <div className="mt-4 rounded-xl border border-white/10 bg-[#120d1d] p-4">
               <div className="mb-4 flex items-center justify-between">
-                <p className="font-medium">Aktivität pro Stunde</p>
+                <p className="font-medium">Rhythmus des Streams</p>
                 <p className="text-sm text-zinc-500">Demo</p>
               </div>
               <div className="flex h-40 items-end gap-2">
@@ -149,9 +150,9 @@ export default function Home() {
         </div>
 
         <div className="grid gap-4 border-t border-white/10 py-5 text-sm text-zinc-400 sm:grid-cols-3">
-          <p>Keine API. Kein Login. Keine Datenbank.</p>
-          <p>Gebaut für schnelle lokale MVP-Iteration.</p>
-          <p className="sm:text-right">Nächster Schritt: Dashboard-Details.</p>
+          <p>Ruhige Signale statt hektischer Vergleiche.</p>
+          <p>Gebaut für bewusste lokale MVP-Iteration.</p>
+          <p className="sm:text-right">Nächster Schritt: mehr Einordnung.</p>
         </div>
       </section>
     </main>

@@ -1,13 +1,18 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type LiveStreamFieldProps = {
   label: string;
   buttonLabel: string;
   field: "category" | "title";
   initialValue: string;
+};
+
+type CategoryResult = {
+  id: string;
+  name: string;
 };
 
 export function LiveStreamField({
@@ -20,8 +25,55 @@ export function LiveStreamField({
   const [error, setError] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+  const [results, setResults] = useState<CategoryResult[]>([]);
+  const [selectedCategoryId, setSelectedCategoryId] = useState("");
+  const [searchError, setSearchError] = useState("");
   const [success, setSuccess] = useState("");
   const [value, setValue] = useState(initialValue);
+  const isCategory = field === "category";
+
+  useEffect(() => {
+    if (!isCategory || !isEditing) {
+      return;
+    }
+
+    const query = value.trim();
+
+    if (query.length < 2) {
+      return;
+    }
+
+    const timeout = window.setTimeout(async () => {
+      setIsSearching(true);
+      setSearchError("");
+
+      try {
+        const response = await fetch(
+          `/api/twitch/categories?query=${encodeURIComponent(query)}`,
+        );
+        const payload = (await response.json()) as {
+          categories?: CategoryResult[];
+          error?: string | null;
+        };
+
+        setResults(payload.categories ?? []);
+
+        if (!response.ok || payload.error) {
+          setSearchError(
+            payload.error ?? "Kategorien konnten nicht geladen werden.",
+          );
+        }
+      } catch {
+        setResults([]);
+        setSearchError("Kategorien konnten nicht geladen werden.");
+      } finally {
+        setIsSearching(false);
+      }
+    }, 250);
+
+    return () => window.clearTimeout(timeout);
+  }, [isCategory, isEditing, value]);
 
   async function saveValue() {
     setError("");
@@ -29,8 +81,12 @@ export function LiveStreamField({
     setIsSaving(true);
 
     try {
+      const body =
+        isCategory && selectedCategoryId
+          ? { category: value, categoryId: selectedCategoryId }
+          : { [field]: value };
       const response = await fetch("/api/twitch/channel", {
-        body: JSON.stringify({ [field]: value }),
+        body: JSON.stringify(body),
         headers: {
           "Content-Type": "application/json",
         },
@@ -45,6 +101,7 @@ export function LiveStreamField({
 
       setSuccess("Gespeichert");
       setIsEditing(false);
+      setResults([]);
       router.refresh();
     } catch {
       setError("Änderung konnte nicht gespeichert werden.");
@@ -68,9 +125,11 @@ export function LiveStreamField({
               return;
             }
 
+            setError("");
+            setSuccess("");
             setIsEditing(true);
           }}
-          className="rounded-lg border border-[#9146ff]/50 bg-[#9146ff]/15 px-3 py-2 text-xs font-semibold text-[#d9c5ff] transition hover:bg-[#9146ff]/25"
+          className="rounded-lg border border-[#9146ff]/50 bg-[#9146ff]/15 px-3 py-2 text-xs font-semibold text-[#d9c5ff] transition hover:bg-[#9146ff]/25 disabled:cursor-not-allowed disabled:opacity-60"
           disabled={isSaving}
         >
           {isSaving ? "Speichert..." : isEditing ? "Speichern" : buttonLabel}
@@ -78,12 +137,60 @@ export function LiveStreamField({
       </div>
 
       {isEditing ? (
-        <input
-          value={value}
-          onChange={(event) => setValue(event.target.value)}
-          className="mt-4 w-full rounded-lg border border-[#9146ff]/40 bg-[#08060d] px-3 py-3 text-sm text-white outline-none transition placeholder:text-zinc-600 focus:border-[#9146ff]"
-          aria-label={label}
-        />
+        <div className="relative mt-4">
+          <input
+            value={value}
+            onChange={(event) => {
+              const nextValue = event.target.value;
+
+              setValue(nextValue);
+              setSelectedCategoryId("");
+
+              if (nextValue.trim().length < 2) {
+                setResults([]);
+                setSearchError("");
+                setIsSearching(false);
+              }
+            }}
+            className="w-full rounded-lg border border-[#9146ff]/40 bg-[#08060d] px-3 py-3 text-sm text-white outline-none transition placeholder:text-zinc-600 disabled:cursor-not-allowed disabled:opacity-60 focus:border-[#9146ff]"
+            aria-label={label}
+            disabled={isSaving}
+          />
+          {isCategory && (isSearching || results.length > 0 || searchError) ? (
+            <div className="absolute left-0 right-0 top-[calc(100%+0.5rem)] z-20 overflow-hidden rounded-xl border border-white/10 bg-[#08060d] shadow-2xl shadow-black/40">
+              {isSearching ? (
+                <p className="px-3 py-3 text-sm text-zinc-400">
+                  Suche Kategorien...
+                </p>
+              ) : null}
+              {!isSearching && results.length > 0
+                ? results.slice(0, 6).map((category) => (
+                    <button
+                      key={category.id}
+                      type="button"
+                      onClick={() => {
+                        setValue(category.name);
+                        setSelectedCategoryId(category.id);
+                        setResults([]);
+                        setSearchError("");
+                      }}
+                      className="flex w-full items-center justify-between gap-3 px-3 py-3 text-left text-sm text-zinc-200 transition hover:bg-[#9146ff]/15"
+                    >
+                      <span>{category.name}</span>
+                      <span className="text-xs text-zinc-600">
+                        ID {category.id}
+                      </span>
+                    </button>
+                  ))
+                : null}
+              {!isSearching && searchError ? (
+                <p className="px-3 py-3 text-sm text-amber-200">
+                  {searchError}
+                </p>
+              ) : null}
+            </div>
+          ) : null}
+        </div>
       ) : (
         <p className="mt-4 line-clamp-2 rounded-lg border border-white/10 bg-[#08060d] px-3 py-3 text-sm font-medium text-zinc-200">
           {value}

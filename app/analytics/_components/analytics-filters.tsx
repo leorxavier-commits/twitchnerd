@@ -12,7 +12,7 @@ export function AnalyticsFilters({
       <div>
         <div className="flex items-center justify-between gap-4">
           <p className="text-sm font-medium text-zinc-300">Zeitraum</p>
-          <span className="text-xs text-zinc-600">Mock-Auswahl</span>
+          <span className="text-xs text-zinc-600">Beispielauswahl</span>
         </div>
         <div className="mt-3 flex flex-wrap gap-1 rounded-xl border border-white/10 bg-[#08060d] p-1">
           {periodOptions.map((option, index) => (

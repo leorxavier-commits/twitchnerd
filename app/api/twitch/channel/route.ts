@@ -4,6 +4,7 @@ import { updateTwitchChannel } from "../../../../lib/twitch";
 export async function PATCH(request: NextRequest) {
   const payload = (await request.json()) as {
     category?: string;
+    categoryId?: string;
     title?: string;
   };
 

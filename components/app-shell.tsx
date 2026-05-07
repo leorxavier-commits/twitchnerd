@@ -4,9 +4,9 @@ import type { ReactNode } from "react";
 const navigationItems = [
   { label: "Overview", href: "/dashboard", eyebrow: "Home" },
   { label: "Live Bereich", href: "/dashboard/live", eyebrow: "Live" },
-  { label: "Analytics", href: "/analytics", eyebrow: "Data" },
+  { label: "Einordnung", href: "/analytics", eyebrow: "Ruhe" },
   { label: "Streams", href: "#", eyebrow: "Plan" },
-  { label: "Community", href: "/community", eyebrow: "Chat" },
+  { label: "Community", href: "/community", eyebrow: "Nähe" },
   { label: "Content", href: "#", eyebrow: "Clips" },
 ];
 
@@ -38,7 +38,7 @@ export function AppShell({
             </span>
             <div>
               <p className="font-semibold">TwitchNerd</p>
-              <p className="text-sm text-zinc-500">LeoNerd87</p>
+              <p className="text-sm text-zinc-500">Creator Cockpit</p>
             </div>
           </Link>
 
@@ -76,10 +76,10 @@ export function AppShell({
           <div className="mt-5 hidden rounded-xl border border-white/10 bg-[#120d1d] p-4 lg:block">
             <div className="flex items-center gap-2 text-sm font-semibold text-emerald-300">
               <span className="size-2 rounded-full bg-emerald-400 shadow-[0_0_16px_rgba(52,211,153,0.8)]" />
-              Streambereit
+              Ruhig bereit
             </div>
             <p className="mt-2 text-sm leading-6 text-zinc-500">
-              Mockdaten aktiv. Keine Verbindung zu Twitch, Login oder Datenbank.
+              Wir helfen dir, gesünder mit deinen Zahlen umzugehen.
             </p>
           </div>
         </aside>

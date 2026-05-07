@@ -9,12 +9,12 @@ export function ContentPerformanceTable({ rows }: ContentPerformanceTableProps) 
     <section className="mt-6 rounded-xl border border-white/10 bg-zinc-950 p-5 shadow-lg shadow-black/10">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-sm font-medium text-[#c6a4ff]">Content Analyse</p>
+          <p className="text-sm font-medium text-[#c6a4ff]">Content Einordnung</p>
           <h2 className="mt-2 text-2xl font-bold">
-            Welche Inhalte performen?
+            Welche Inhalte verbinden gut?
           </h2>
         </div>
-        <p className="text-sm text-zinc-500">Mock-Ranking nach Kategorie</p>
+        <p className="text-sm text-zinc-500">Beispielwerte nach Kategorie</p>
       </div>
 
       <div className="mt-5 overflow-x-auto">
@@ -24,13 +24,13 @@ export function ContentPerformanceTable({ rows }: ContentPerformanceTableProps) 
               {[
                 "Kategorie",
                 "Streams",
-                "Ø Viewer",
-                "Peak Viewer",
-                "Follower",
-                "Subs",
+                "Ø Begleitung",
+                "Stärkster Moment",
+                "Neue Verbindungen",
+                "Unterstützer",
                 "Bits",
                 "Chat/min",
-                "Trend",
+                "Einordnung",
               ].map((heading) => (
                 <th
                   key={heading}
@@ -54,7 +54,7 @@ export function ContentPerformanceTable({ rows }: ContentPerformanceTableProps) 
                     <span>{row.category}</span>
                     {row.isBest ? (
                       <span className="rounded-full bg-[#00f5d4]/10 px-2 py-1 text-xs font-semibold text-[#00f5d4]">
-                        Beste Kategorie
+                        Starke Verbindung
                       </span>
                     ) : null}
                   </div>
@@ -85,7 +85,7 @@ export function ContentPerformanceTable({ rows }: ContentPerformanceTableProps) 
                     className={`rounded-full px-2 py-1 text-xs font-semibold ${
                       row.trendDirection === "positive"
                         ? "bg-emerald-400/10 text-emerald-300"
-                        : "bg-rose-400/10 text-rose-300"
+                        : "bg-amber-400/10 text-amber-200"
                     }`}
                   >
                     {row.trend}

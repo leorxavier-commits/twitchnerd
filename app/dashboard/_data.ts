@@ -1,24 +1,24 @@
 export const stats = [
   {
-    label: "Live-Zuschauer",
+    label: "Menschen dabei",
     value: "124",
     trend: "+12%",
     tone: "text-[#00f5d4]",
   },
   {
-    label: "Neue Follower",
+    label: "Neue Verbindungen",
     value: "18",
     trend: "+5",
     tone: "text-[#ff66c4]",
   },
   {
-    label: "Subs heute",
+    label: "Unterstützer heute",
     value: "7",
     trend: "+2",
     tone: "text-[#c6a4ff]",
   },
   {
-    label: "Chat Messages",
+    label: "Austausch im Chat",
     value: "842",
     trend: "+31%",
     tone: "text-[#f5d742]",
@@ -38,14 +38,14 @@ export const chartData = [
 export const activities = [
   "NerdFan42 folgt dem Kanal",
   "CodeMage hat 3 Monate resubbt",
-  "Chat Peak bei 20:34 Uhr erreicht",
+  "Besonders lebendiger Chat gegen 20:34 Uhr",
   "Clip: Bossfight Fail gespeichert",
 ];
 
 export const goals = [
-  { label: "Follower Ziel", value: "72%" },
-  { label: "Sub Ziel", value: "46%" },
-  { label: "Chat Engagement", value: "84%" },
+  { label: "Community-Ziel", value: "72%" },
+  { label: "Unterstützer-Ziel", value: "46%" },
+  { label: "Austausch", value: "84%" },
 ];
 
 export const liveOverview = {

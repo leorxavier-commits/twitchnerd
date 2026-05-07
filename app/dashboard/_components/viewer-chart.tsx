@@ -9,9 +9,9 @@ export function ViewerChart({ data }: ViewerChartProps) {
     <article className="rounded-xl border border-white/10 bg-zinc-950 p-5">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-semibold">Viewer Verlauf</h2>
+          <h2 className="text-xl font-semibold">Begleitung im Verlauf</h2>
           <p className="mt-1 text-sm text-zinc-500">
-            Beispielwerte aus Mockdaten
+            Beispielwerte zur ruhigen Einordnung
           </p>
         </div>
         <span className="rounded-full bg-[#00f5d4]/10 px-3 py-1 text-xs font-semibold text-[#00f5d4]">

@@ -17,15 +17,18 @@ export default async function LiveDashboardPage() {
   return (
     <DashboardShell
       activeItem="Live Bereich"
-      eyebrow={twitchData.source === "twitch" ? "Twitch Live" : "Mock Live"}
-      title="Live Bereich"
+      eyebrow={twitchData.source === "twitch" ? "Live Cockpit" : "Beispiel Live"}
+      title="Live Cockpit"
       summary={
         twitchData.isAuthenticated
-          ? "Twitch verbunden. Basisdaten werden serverseitig geladen."
-          : "Nicht mit Twitch verbunden. Es werden Mockdaten angezeigt."
+          ? "Twitch verbunden. Wir ordnen Live-Signale ruhig und serverseitig ein."
+          : "Nicht mit Twitch verbunden. Die Ansicht zeigt Beispielwerte mit klarer Kennzeichnung."
       }
     >
       <LiveControlSection
+        activityEvents={twitchData.activityEvents}
+        activityWarning={twitchData.activityWarning}
+        error={twitchData.error}
         isAuthenticated={twitchData.isAuthenticated}
         live={liveOverview}
         source={twitchData.source}

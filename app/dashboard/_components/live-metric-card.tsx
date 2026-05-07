@@ -24,8 +24,8 @@ export function LiveMetricCard({ metric }: LiveMetricCardProps) {
         {metric.value}
       </p>
       {metric.highlight ? (
-        <span className="mt-3 inline-flex rounded-full bg-[#00f5d4]/10 px-2 py-1 text-xs font-semibold text-[#00f5d4]">
-          Tages-Peak
+        <span className="mt-3 inline-flex rounded-full bg-[#9146ff]/10 px-2 py-1 text-xs font-semibold text-[#d9c5ff]">
+          Kontextwert
         </span>
       ) : null}
       <p className="mt-2 text-xs leading-5 text-zinc-500">{metric.detail}</p>

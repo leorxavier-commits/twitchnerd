@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "TwitchNerd",
-  description: "Mock Dashboard für Twitch-Streamer",
+  description: "Ruhiges Creator Cockpit für Twitch-Streamer",
 };
 
 export default function RootLayout({

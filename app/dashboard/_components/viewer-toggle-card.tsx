@@ -13,8 +13,8 @@ export function ViewerToggleCard({ viewers }: ViewerToggleCardProps) {
     <article className="self-start rounded-xl border border-white/10 bg-zinc-950/70 p-4 shadow-lg shadow-black/10">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-sm text-zinc-400">Aktuelle Viewer</p>
-          <p className="mt-3 text-3xl font-bold text-white transition-all duration-300">
+          <p className="text-sm text-zinc-400">Menschen gerade dabei</p>
+          <p className="mt-3 text-2xl font-semibold text-white transition-all duration-300">
             {showViewers ? viewers : "•••"}
           </p>
         </div>
@@ -28,7 +28,7 @@ export function ViewerToggleCard({ viewers }: ViewerToggleCardProps) {
               : "border-white/10 bg-white/[0.04]"
           }`}
           aria-pressed={showViewers}
-          aria-label="Viewer anzeigen oder verstecken"
+          aria-label="Zahl anzeigen oder ausblenden"
         >
           <span
             className={`absolute top-1 size-6 rounded-full bg-white transition-all duration-300 ${
@@ -38,7 +38,9 @@ export function ViewerToggleCard({ viewers }: ViewerToggleCardProps) {
         </button>
       </div>
       <p className="mt-3 text-xs text-zinc-500">
-        {showViewers ? "Viewerzahl sichtbar" : "Viewerzahl ausgeblendet"}
+        {showViewers
+          ? "Sichtbar, aber bewusst nicht im Mittelpunkt"
+          : "Ausgeblendet fuer weniger Zahlendruck"}
       </p>
     </article>
   );

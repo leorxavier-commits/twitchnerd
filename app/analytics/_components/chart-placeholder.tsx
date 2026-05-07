@@ -8,16 +8,18 @@ export function ChartPlaceholder({ chart }: ChartPlaceholderProps) {
   const trendClass =
     chart.trendDirection === "positive"
       ? "bg-emerald-400/10 text-emerald-300"
-      : "bg-rose-400/10 text-rose-300";
+      : chart.trendDirection === "negative"
+        ? "bg-amber-400/10 text-amber-200"
+        : "bg-white/[0.05] text-zinc-300";
 
   return (
     <article className="rounded-xl border border-white/10 bg-zinc-950 p-5 shadow-lg shadow-black/10">
       <div className="flex items-start justify-between gap-4">
         <div>
-        <h2 className="text-xl font-semibold">{chart.title}</h2>
-        <p className="mt-1 text-sm leading-6 text-zinc-500">
-          {chart.description}
-        </p>
+          <h2 className="text-xl font-semibold">{chart.title}</h2>
+          <p className="mt-1 text-sm leading-6 text-zinc-500">
+            {chart.description}
+          </p>
         </div>
         <span className={`rounded-full px-2 py-1 text-xs font-semibold ${trendClass}`}>
           {chart.trend}

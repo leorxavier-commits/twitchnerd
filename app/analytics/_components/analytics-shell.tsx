@@ -8,10 +8,10 @@ type AnalyticsShellProps = {
 export function AnalyticsShell({ children }: AnalyticsShellProps) {
   return (
     <AppShell
-      activeItem="Analytics"
-      eyebrow="Mock Analytics"
-      summary="Auswertung nur mit statischen Beispieldaten"
-      title="Analytics"
+      activeItem="Einordnung"
+      eyebrow="Creator Einordnung"
+      summary="Beispieldaten, die Entwicklung ruhig einordnen statt Druck aufzubauen."
+      title="Entwicklung"
     >
       {children}
     </AppShell>

@@ -8,7 +8,9 @@ export function AnalyticsKpiCard({ kpi }: AnalyticsKpiCardProps) {
   const trendClass =
     kpi.trendDirection === "positive"
       ? "bg-emerald-400/10 text-emerald-300"
-      : "bg-rose-400/10 text-rose-300";
+      : kpi.trendDirection === "negative"
+        ? "bg-amber-400/10 text-amber-200"
+        : "bg-white/[0.05] text-zinc-300";
 
   return (
     <article className="rounded-xl border border-white/10 bg-zinc-950 p-5 shadow-lg shadow-black/10">

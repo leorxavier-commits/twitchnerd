@@ -3,14 +3,22 @@ import { AppShell } from "../../../components/app-shell";
 
 type CommunityShellProps = {
   children: ReactNode;
+  isTwitchConnected: boolean;
 };
 
-export function CommunityShell({ children }: CommunityShellProps) {
+export function CommunityShell({
+  children,
+  isTwitchConnected,
+}: CommunityShellProps) {
   return (
     <AppShell
       activeItem="Community"
-      eyebrow="Mock Community"
-      summary="Community-Aktivität nur mit statischen Beispieldaten"
+      eyebrow={isTwitchConnected ? "Twitch Community" : "Verbindungen"}
+      summary={
+        isTwitchConnected
+          ? "Menschen, die deinen Kanal begleiten und unterstützen."
+          : "Verbinde Twitch, um echte Community-Signale zu sehen."
+      }
       title="Community"
     >
       {children}
