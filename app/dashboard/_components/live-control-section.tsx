@@ -14,6 +14,7 @@ export function LiveControlSection({ live }: LiveControlSectionProps) {
       label: "Peak Viewer heute",
       value: live.peakViewers.toString(),
       detail: "Bester Moment im Stream",
+      highlight: true,
       tone: "text-[#00f5d4]",
     },
     {
@@ -41,12 +42,31 @@ export function LiveControlSection({ live }: LiveControlSectionProps) {
       id="live-bereich"
       className="mt-6 rounded-2xl border border-white/10 bg-zinc-950 p-5"
     >
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <p className="text-sm font-medium text-[#c6a4ff]">Live Bereich</p>
-          <h2 className="mt-2 text-2xl font-bold">Stream-Steuerung</h2>
+          <div className="inline-flex items-center gap-2 rounded-full bg-rose-500/15 px-3 py-1 text-sm font-semibold text-rose-300">
+            <span className="size-2 rounded-full bg-rose-400 animate-pulse" />
+            Live Control
+          </div>
+          <h2 className="mt-4 text-2xl font-bold">Stream-Steuerung</h2>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-zinc-500">
+            Schnelle Kontrolle für Titel, Kategorie und aktuelle Streamsignale.
+            Alles bleibt lokal und arbeitet mit Mockdaten.
+          </p>
         </div>
-        <p className="text-sm text-zinc-500">Nur UI mit Mockdaten</p>
+        <div className="grid gap-2 sm:grid-cols-3">
+          {live.indicators.map((indicator) => (
+            <div
+              key={indicator.label}
+              className="rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2"
+            >
+              <p className="text-xs text-zinc-500">{indicator.label}</p>
+              <p className="mt-1 text-sm font-semibold text-zinc-200">
+                {indicator.value}
+              </p>
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className="mt-5 grid gap-5 xl:grid-cols-[1.25fr_0.75fr]">

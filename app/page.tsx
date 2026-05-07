@@ -9,10 +9,10 @@ const highlights = [
   {
     label: "Follower heute",
     value: "+18",
-    detail: "Mockdaten fuer LeoNerd87",
+    detail: "Mockdaten für LeoNerd87",
   },
   {
-    label: "Chat-Aktivitaet",
+    label: "Chat-Aktivität",
     value: "842",
     detail: "Nachrichten im letzten Stream",
   },
@@ -20,7 +20,7 @@ const highlights = [
 
 const features = [
   "Stream-Metriken auf einen Blick",
-  "Mock-Charts fuer fruehe Tests",
+  "Mock-Charts für frühe Tests",
   "Dashboard-Struktur ohne Login",
 ];
 
@@ -49,7 +49,7 @@ export default function Home() {
         <div className="grid flex-1 items-center gap-10 py-12 lg:grid-cols-[1.05fr_0.95fr] lg:py-16">
           <div className="max-w-3xl">
             <p className="mb-4 inline-flex rounded-lg border border-[#9146ff]/40 bg-[#9146ff]/15 px-3 py-1 text-sm font-medium text-[#c6a4ff]">
-              MVP Dashboard fuer LeoNerd87
+              MVP Dashboard für LeoNerd87
             </p>
 
             <h1 className="max-w-4xl text-4xl font-bold leading-tight sm:text-6xl lg:text-7xl">
@@ -58,7 +58,7 @@ export default function Home() {
 
             <p className="mt-6 max-w-2xl text-base leading-8 text-zinc-300 sm:text-lg">
               TwitchNerd startet als schlankes Mock-Dashboard: klare Zahlen,
-              dunkles Interface und genug Struktur, um die naechsten Features
+              dunkles Interface und genug Struktur, um die nächsten Features
               sauber zu testen.
             </p>
 
@@ -67,7 +67,7 @@ export default function Home() {
                 href="/dashboard"
                 className="rounded-lg bg-[#9146ff] px-5 py-3 text-center text-sm font-semibold text-white shadow-lg shadow-[#9146ff]/25 transition hover:bg-[#7b2ff0]"
               >
-                Dashboard oeffnen
+                Dashboard öffnen
               </Link>
               <a
                 href="#mockdaten"
@@ -122,7 +122,7 @@ export default function Home() {
 
             <div className="mt-4 rounded-xl border border-white/10 bg-[#120d1d] p-4">
               <div className="mb-4 flex items-center justify-between">
-                <p className="font-medium">Aktivitaet pro Stunde</p>
+                <p className="font-medium">Aktivität pro Stunde</p>
                 <p className="text-sm text-zinc-500">Demo</p>
               </div>
               <div className="flex h-40 items-end gap-2">
@@ -144,8 +144,8 @@ export default function Home() {
 
         <div className="grid gap-4 border-t border-white/10 py-5 text-sm text-zinc-400 sm:grid-cols-3">
           <p>Keine API. Kein Login. Keine Datenbank.</p>
-          <p>Gebaut fuer schnelle lokale MVP-Iteration.</p>
-          <p className="sm:text-right">Naechster Schritt: Dashboard-Details.</p>
+          <p>Gebaut für schnelle lokale MVP-Iteration.</p>
+          <p className="sm:text-right">Nächster Schritt: Dashboard-Details.</p>
         </div>
       </section>
     </main>

@@ -1,16 +1,19 @@
 # TwitchNerd
 
-TwitchNerd ist ein fruehes MVP fuer ein persoenliches Twitch-Dashboard fuer den Streamer LeoNerd87.
+TwitchNerd ist ein frühes MVP für ein persönliches Twitch-Dashboard für den Streamer LeoNerd87.
 
 Aktuell ist es bewusst nur eine UI mit Mockdaten. Es gibt noch keine Twitch API, kein Login und keine Datenbank.
 
-## Was hinzugefuegt wurde
+## Was hinzugefügt wurde
 
 - Moderne Landingpage unter `/`
 - Dashboard-Seite unter `/dashboard`
-- Dunkles Twitch-inspiriertes Design
-- Responsive Layout mit Sidebar, Karten, Mock-Metriken, Balken-Chart und Aktivitaeten
-- Systemfonts statt externer Font-Downloads fuer budgetfreundliche lokale Builds
+- Eigener Live-Bereich unter `/dashboard/live`
+- Analytics-Seite unter `/analytics`
+- Dunkles Twitch-inspiriertes Design mit professioneller Sidebar
+- Responsive Layout mit Karten, Mock-Metriken, Balken-Charts und Aktivitäten
+- Content-Performance-Tabelle mit Mockdaten
+- Systemfonts statt externer Font-Downloads für budgetfreundliche lokale Builds
 
 ## Projekt starten
 
@@ -18,7 +21,7 @@ Aktuell ist es bewusst nur eine UI mit Mockdaten. Es gibt noch keine Twitch API,
 npm run dev
 ```
 
-Danach im Browser oeffnen:
+Danach im Browser öffnen:
 
 ```text
 http://localhost:3000
@@ -31,7 +34,7 @@ npm run lint
 npm run build
 ```
 
-## Aktuelle Einschraenkungen
+## Aktuelle Einschränkungen
 
 - Alle Werte sind Mockdaten.
 - Es gibt keine Authentifizierung.
@@ -39,9 +42,9 @@ npm run build
 - Es gibt keine Datenbank oder Persistenz.
 - Es gibt noch keine shadcn/ui Komponenten im Projekt.
 
-## Naechste geplante Schritte
+## Nächste geplante Schritte
 
-- Dashboard-Komponenten weiter aufteilen
-- Mock-Charts und Aktivitaeten verfeinern
+- Dashboard- und Analytics-Komponenten weiter verfeinern
+- Mock-Charts und Aktivitäten verfeinern
 - Responsive Details testen
-- Spaeter Twitch OAuth und Twitch API serverseitig anbinden
+- Später Twitch OAuth und Twitch API serverseitig anbinden

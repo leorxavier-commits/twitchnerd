@@ -58,34 +58,34 @@ export const liveOverview = {
   newFollowers: 18,
   subs: 7,
   bits: 2450,
+  indicators: [
+    { label: "Verbindung", value: "Stabil", tone: "emerald" },
+    { label: "Latenz", value: "Niedrig", tone: "cyan" },
+    { label: "Alerts", value: "Aktiv", tone: "purple" },
+  ],
   events: [
     {
       time: "21:42",
+      type: "Follow",
       label: "NerdFan42 folgt jetzt dem Kanal",
     },
     {
       time: "21:35",
+      type: "Bits",
       label: "CodeMage hat 500 Bits gesendet",
     },
     {
       time: "21:18",
+      type: "Sub",
       label: "PixelPilot hat ein Sub verschenkt",
     },
     {
       time: "20:57",
+      type: "Clip",
       label: "Bossfight Fail wurde als Clip gespeichert",
     },
   ],
 };
-
-export const navItems = [
-  { label: "Overview", href: "/dashboard" },
-  { label: "Live Bereich", href: "/dashboard/live" },
-  { label: "Analytics", href: "/analytics" },
-  { label: "Streams", href: "#" },
-  { label: "Community", href: "#" },
-  { label: "Content", href: "#" },
-];
 
 export type Stat = (typeof stats)[number];
 export type ChartPoint = (typeof chartData)[number];

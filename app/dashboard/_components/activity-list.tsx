@@ -5,7 +5,7 @@ type ActivityListProps = {
 export function ActivityList({ activities }: ActivityListProps) {
   return (
     <article className="rounded-xl border border-white/10 bg-zinc-950 p-5">
-      <h2 className="text-xl font-semibold">Aktivitaeten</h2>
+      <h2 className="text-xl font-semibold">Aktivitäten</h2>
       <div className="mt-5 grid gap-3">
         {activities.map((activity) => (
           <div

@@ -17,9 +17,12 @@ export function LiveStreamField({
   const [value, setValue] = useState(initialValue);
 
   return (
-    <div className="rounded-xl border border-white/10 bg-zinc-950/50 p-3">
+    <div className="rounded-xl border border-white/10 bg-zinc-950/70 p-4 shadow-lg shadow-black/10">
       <div className="flex items-center justify-between gap-3">
-        <p className="text-xs font-medium text-zinc-400">{label}</p>
+        <div>
+          <p className="text-xs font-medium uppercase text-zinc-500">{label}</p>
+          <p className="mt-1 text-xs text-zinc-600">Twitch-Control Mock</p>
+        </div>
         <button
           type="button"
           onClick={() => setIsEditing((current) => !current)}
@@ -33,11 +36,11 @@ export function LiveStreamField({
         <input
           value={value}
           onChange={(event) => setValue(event.target.value)}
-          className="mt-3 w-full rounded-lg border border-[#9146ff]/40 bg-[#08060d] px-3 py-2 text-sm text-white outline-none transition placeholder:text-zinc-600 focus:border-[#9146ff]"
+          className="mt-4 w-full rounded-lg border border-[#9146ff]/40 bg-[#08060d] px-3 py-3 text-sm text-white outline-none transition placeholder:text-zinc-600 focus:border-[#9146ff]"
           aria-label={label}
         />
       ) : (
-        <p className="mt-3 line-clamp-2 text-sm font-medium text-zinc-200">
+        <p className="mt-4 line-clamp-2 rounded-lg border border-white/10 bg-[#08060d] px-3 py-3 text-sm font-medium text-zinc-200">
           {value}
         </p>
       )}
