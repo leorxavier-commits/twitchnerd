@@ -1,10 +1,15 @@
-import type { LiveOverviewData } from "../_data";
+import type { TwitchStreamStatus } from "../../../lib/twitch";
 
 type LiveOverviewProps = {
-  live: LiveOverviewData;
+  stream: TwitchStreamStatus;
 };
 
-export function LiveOverview({ live }: LiveOverviewProps) {
+export function LiveOverview({ stream }: LiveOverviewProps) {
+  const statusLabel = stream.isLive ? "Online" : "Offline";
+  const statusClass = stream.isLive
+    ? "bg-rose-500/15 text-rose-300"
+    : "bg-white/[0.04] text-zinc-400";
+
   return (
     <section
       id="overview"
@@ -15,9 +20,15 @@ export function LiveOverview({ live }: LiveOverviewProps) {
           <p className="text-sm font-medium text-[#c6a4ff]">Overview</p>
           <h2 className="mt-2 text-2xl font-bold">Stream Status</h2>
         </div>
-        <span className="inline-flex w-fit items-center gap-2 rounded-full bg-rose-500/15 px-4 py-2 text-sm font-semibold text-rose-300">
-          <span className="size-2 rounded-full bg-rose-400 animate-pulse" />
-          {live.status}
+        <span
+          className={`inline-flex w-fit items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold ${statusClass}`}
+        >
+          <span
+            className={`size-2 rounded-full ${
+              stream.isLive ? "bg-rose-400 animate-pulse" : "bg-zinc-500"
+            }`}
+          />
+          {statusLabel}
         </span>
       </div>
     </section>

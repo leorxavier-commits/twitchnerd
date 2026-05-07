@@ -1,16 +1,35 @@
 import { DashboardShell } from "../_components/dashboard-shell";
 import { LiveControlSection } from "../_components/live-control-section";
 import { liveOverview } from "../_data";
+import { getTwitchDashboardData } from "../../../lib/twitch";
 
-export default function LiveDashboardPage() {
+export default async function LiveDashboardPage() {
+  const twitchData = await getTwitchDashboardData({
+    category: liveOverview.category,
+    isLive: liveOverview.status === "Live",
+    startedAt: null,
+    title: liveOverview.title,
+    viewerCount: liveOverview.currentViewers,
+  });
+
   return (
     <DashboardShell
       activeItem="Live Bereich"
-      eyebrow="Mock Live"
+      eyebrow={twitchData.source === "twitch" ? "Twitch Live" : "Mock Live"}
       title="Live Bereich"
-      summary="Streamtitel, Kategorie und Live-Metriken als reine UI mit Mockdaten."
+      summary={
+        twitchData.isAuthenticated
+          ? "Twitch verbunden. Basisdaten werden serverseitig geladen."
+          : "Nicht mit Twitch verbunden. Es werden Mockdaten angezeigt."
+      }
     >
-      <LiveControlSection live={liveOverview} />
+      <LiveControlSection
+        isAuthenticated={twitchData.isAuthenticated}
+        live={liveOverview}
+        source={twitchData.source}
+        stream={twitchData.stream}
+        user={twitchData.user}
+      />
     </DashboardShell>
   );
 }

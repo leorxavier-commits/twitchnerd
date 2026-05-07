@@ -6,7 +6,7 @@ const navigationItems = [
   { label: "Live Bereich", href: "/dashboard/live", eyebrow: "Live" },
   { label: "Analytics", href: "/analytics", eyebrow: "Data" },
   { label: "Streams", href: "#", eyebrow: "Plan" },
-  { label: "Community", href: "#", eyebrow: "Chat" },
+  { label: "Community", href: "/community", eyebrow: "Chat" },
   { label: "Content", href: "#", eyebrow: "Clips" },
 ];
 

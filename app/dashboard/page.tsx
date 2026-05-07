@@ -6,11 +6,20 @@ import { StatCard } from "./_components/stat-card";
 import { StreamGoals } from "./_components/stream-goals";
 import { ViewerChart } from "./_components/viewer-chart";
 import { activities, chartData, goals, liveOverview, stats } from "./_data";
+import { getTwitchDashboardData } from "../../lib/twitch";
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const twitchData = await getTwitchDashboardData({
+    category: liveOverview.category,
+    isLive: liveOverview.status === "Live",
+    startedAt: null,
+    title: liveOverview.title,
+    viewerCount: liveOverview.currentViewers,
+  });
+
   return (
     <DashboardShell activeItem="Overview">
-      <LiveOverview live={liveOverview} />
+      <LiveOverview stream={twitchData.stream} />
 
       <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {stats.map((stat) => (

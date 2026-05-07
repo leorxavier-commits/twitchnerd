@@ -70,6 +70,12 @@ export default function Home() {
                 Dashboard öffnen
               </Link>
               <a
+                href="/api/auth/twitch/login"
+                className="rounded-lg border border-[#9146ff]/50 bg-[#9146ff]/15 px-5 py-3 text-center text-sm font-semibold text-[#d9c5ff] transition hover:bg-[#9146ff]/25"
+              >
+                Mit Twitch einloggen
+              </a>
+              <a
                 href="#mockdaten"
                 className="rounded-lg border border-white/15 px-5 py-3 text-center text-sm font-semibold text-zinc-100 transition hover:border-white/30 hover:bg-white/10"
               >
