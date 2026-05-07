@@ -128,16 +128,24 @@ export function LiveControlSection({
         <div>
           <div className="grid gap-3 lg:grid-cols-2">
             <LiveStreamField
+              field="title"
               label="Streamtitel"
               buttonLabel="Titel bearbeiten"
               initialValue={stream.title}
             />
             <LiveStreamField
+              field="category"
               label="Kategorie"
               buttonLabel="Kategorie bearbeiten"
               initialValue={stream.category}
             />
           </div>
+
+          {stream.channelInfoError ? (
+            <div className="mt-4 rounded-xl border border-amber-400/20 bg-amber-400/10 p-4 text-sm leading-6 text-amber-200">
+              {stream.channelInfoError}
+            </div>
+          ) : null}
 
           {user ? (
             <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.03] p-4">

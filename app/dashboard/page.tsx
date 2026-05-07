@@ -11,6 +11,8 @@ import { getTwitchDashboardData } from "../../lib/twitch";
 export default async function DashboardPage() {
   const twitchData = await getTwitchDashboardData({
     category: liveOverview.category,
+    channelInfoError: null,
+    gameId: null,
     isLive: liveOverview.status === "Live",
     startedAt: null,
     title: liveOverview.title,

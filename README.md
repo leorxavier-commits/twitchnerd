@@ -28,7 +28,7 @@ APP_URL=http://localhost:3000
 TWITCH_CLIENT_ID=your_twitch_client_id
 TWITCH_CLIENT_SECRET=your_twitch_client_secret
 TWITCH_REDIRECT_URI=http://localhost:3000/api/auth/twitch/callback
-TWITCH_OAUTH_SCOPES=
+TWITCH_OAUTH_SCOPES=channel:manage:broadcast
 ```
 
 In der Twitch Developer Console:
@@ -37,7 +37,9 @@ In der Twitch Developer Console:
 - OAuth Redirect URL exakt auf `http://localhost:3000/api/auth/twitch/callback` setzen
 - Client ID und Client Secret in `.env.local` eintragen
 
-Aktuell werden keine zusätzlichen Scopes benötigt. Es werden nur User-Basisdaten und der aktuelle Streamstatus serverseitig über Twitch Helix geladen.
+Für das Ändern von Streamtitel und Kategorie wird der Scope `channel:manage:broadcast` benötigt. Wenn du diesen Scope nachträglich ergänzt, musst du dich über TwitchNerd neu mit Twitch einloggen, damit Twitch einen Token mit dem neuen Scope ausstellt.
+
+TwitchNerd lädt live/offline, aktuelle Viewer und `started_at` über `Get Streams`. Titel und Kategorie werden über `Get Channel Information` geladen. Änderungen an Titel und Kategorie laufen serverseitig über `Modify Channel Information`.
 - Systemfonts statt externer Font-Downloads für budgetfreundliche lokale Builds
 
 ## Projekt starten

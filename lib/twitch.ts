@@ -17,6 +17,8 @@ export type TwitchUser = {
 
 export type TwitchStreamStatus = {
   category: string;
+  channelInfoError: string | null;
+  gameId: string | null;
   isLive: boolean;
   startedAt: string | null;
   title: string;
@@ -53,6 +55,27 @@ type TwitchStreamsResponse = {
     type: string;
     viewer_count: number;
   }>;
+};
+
+type TwitchChannelResponse = {
+  data: Array<{
+    game_id: string;
+    game_name: string;
+    title: string;
+  }>;
+};
+
+type TwitchCategoriesResponse = {
+  data: Array<{
+    id: string;
+    name: string;
+  }>;
+};
+
+type TwitchApiError = {
+  error?: string;
+  message?: string;
+  status?: number;
 };
 
 export function getTwitchConfig() {
@@ -155,12 +178,18 @@ export async function getTwitchDashboardData(
 
   try {
     const user = await fetchTwitchUser(accessToken, config.clientId);
-    const stream = await fetchTwitchStream(
-      accessToken,
-      config.clientId,
-      user.id,
-      mockStream,
-    );
+    const [streamState, channelInfo] = await Promise.all([
+      fetchTwitchStream(accessToken, config.clientId, user.id, mockStream),
+      fetchTwitchChannelInfo(accessToken, config.clientId, user.id),
+    ]);
+
+    const stream = {
+      ...streamState,
+      category: channelInfo?.category ?? mockStream.category,
+      channelInfoError: channelInfo?.error ?? null,
+      gameId: channelInfo?.gameId ?? mockStream.gameId,
+      title: channelInfo?.title ?? mockStream.title,
+    };
 
     return {
       isAuthenticated: true,
@@ -168,12 +197,81 @@ export async function getTwitchDashboardData(
       stream,
       user,
     };
-  } catch {
+  } catch (error) {
+    logTwitchError("dashboard-data", error);
+
     return {
       isAuthenticated: true,
       source: "mock",
       stream: mockStream,
       user: null,
+    };
+  }
+}
+
+export async function updateTwitchChannel(input: {
+  category?: string;
+  title?: string;
+}) {
+  const config = getTwitchConfig();
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get(ACCESS_TOKEN_COOKIE)?.value;
+  const expiresAtValue = cookieStore.get(TOKEN_EXPIRES_AT_COOKIE)?.value;
+  const expiresAt = expiresAtValue ? Number(expiresAtValue) : 0;
+
+  if (!config.clientId || !accessToken || Date.now() >= expiresAt) {
+    return {
+      error: "Bitte zuerst mit Twitch einloggen.",
+      ok: false,
+    };
+  }
+
+  try {
+    const user = await fetchTwitchUser(accessToken, config.clientId);
+    const patch: { game_id?: string; title?: string } = {};
+
+    if (input.title !== undefined) {
+      patch.title = input.title.trim();
+    }
+
+    if (input.category !== undefined) {
+      const categoryName = input.category.trim();
+
+      if (!categoryName) {
+        return {
+          error: "Bitte eine Kategorie eingeben.",
+          ok: false,
+        };
+      }
+
+      const category = await findTwitchCategory(
+        accessToken,
+        config.clientId,
+        categoryName,
+      );
+
+      if (!category) {
+        return {
+          error: "Keine passende Twitch-Kategorie gefunden.",
+          ok: false,
+        };
+      }
+
+      patch.game_id = category.id;
+    }
+
+    await modifyTwitchChannel(accessToken, config.clientId, user.id, patch);
+
+    return {
+      ok: true,
+    };
+  } catch (error) {
+    logTwitchError("update-channel", error);
+
+    return {
+      error:
+        "Twitch konnte nicht aktualisiert werden. Prüfe Scope und Login.",
+      ok: false,
     };
   }
 }
@@ -215,7 +313,7 @@ async function fetchTwitchStream(
   });
 
   if (!response.ok) {
-    throw new Error("Could not fetch Twitch stream.");
+    throw await createTwitchRequestError("Get Streams", response);
   }
 
   const payload = (await response.json()) as TwitchStreamsResponse;
@@ -224,6 +322,8 @@ async function fetchTwitchStream(
   if (!stream) {
     return {
       category: mockStream.category,
+      channelInfoError: null,
+      gameId: mockStream.gameId,
       isLive: false,
       startedAt: null,
       title: mockStream.title,
@@ -233,6 +333,8 @@ async function fetchTwitchStream(
 
   return {
     category: stream.game_name || "Keine Kategorie",
+    channelInfoError: null,
+    gameId: mockStream.gameId,
     isLive: stream.type === "live",
     startedAt: stream.started_at,
     title: stream.title || "Ohne Streamtitel",
@@ -240,9 +342,129 @@ async function fetchTwitchStream(
   };
 }
 
+async function fetchTwitchChannelInfo(
+  accessToken: string,
+  clientId: string,
+  userId: string,
+) {
+  const params = new URLSearchParams({ broadcaster_id: userId });
+  const response = await fetch(`${TWITCH_API_URL}/channels?${params}`, {
+    cache: "no-store",
+    headers: createTwitchHeaders(accessToken, clientId),
+  });
+
+  if (!response.ok) {
+    const error = await createTwitchRequestError(
+      "Get Channel Information",
+      response,
+    );
+    logTwitchError("get-channel-information", error);
+
+    return {
+      category: null,
+      error:
+        "Kanalinformationen konnten nicht geladen werden. Titel und Kategorie nutzen Mockdaten.",
+      gameId: null,
+      title: null,
+    };
+  }
+
+  const payload = (await response.json()) as TwitchChannelResponse;
+  const channel = payload.data[0];
+
+  if (!channel) {
+    return {
+      category: null,
+      error:
+        "Twitch hat keine Kanalinformationen zurückgegeben. Titel und Kategorie nutzen Mockdaten.",
+      gameId: null,
+      title: null,
+    };
+  }
+
+  return {
+    category: channel.game_name || "Keine Kategorie",
+    error: null,
+    gameId: channel.game_id || null,
+    title: channel.title || "Ohne Streamtitel",
+  };
+}
+
+async function findTwitchCategory(
+  accessToken: string,
+  clientId: string,
+  categoryName: string,
+) {
+  const params = new URLSearchParams({ query: categoryName });
+  const response = await fetch(`${TWITCH_API_URL}/search/categories?${params}`, {
+    cache: "no-store",
+    headers: createTwitchHeaders(accessToken, clientId),
+  });
+
+  if (!response.ok) {
+    throw await createTwitchRequestError("Search Categories", response);
+  }
+
+  const payload = (await response.json()) as TwitchCategoriesResponse;
+  const normalized = categoryName.toLowerCase();
+
+  return (
+    payload.data.find((category) => category.name.toLowerCase() === normalized) ??
+    payload.data[0] ??
+    null
+  );
+}
+
+async function modifyTwitchChannel(
+  accessToken: string,
+  clientId: string,
+  userId: string,
+  patch: { game_id?: string; title?: string },
+) {
+  const params = new URLSearchParams({ broadcaster_id: userId });
+  const response = await fetch(`${TWITCH_API_URL}/channels?${params}`, {
+    body: JSON.stringify(patch),
+    cache: "no-store",
+    headers: {
+      ...createTwitchHeaders(accessToken, clientId),
+      "Content-Type": "application/json",
+    },
+    method: "PATCH",
+  });
+
+  if (!response.ok) {
+    throw await createTwitchRequestError("Modify Channel Information", response);
+  }
+}
+
 function createTwitchHeaders(accessToken: string, clientId: string) {
   return {
     Authorization: `Bearer ${accessToken}`,
     "Client-Id": clientId,
   };
+}
+
+async function createTwitchRequestError(endpoint: string, response: Response) {
+  let payload: TwitchApiError = {};
+
+  try {
+    payload = (await response.json()) as TwitchApiError;
+  } catch {
+    payload = {};
+  }
+
+  return new Error(
+    `${endpoint} failed with ${response.status}: ${
+      payload.message ?? payload.error ?? "Unknown Twitch error"
+    }`,
+  );
+}
+
+function logTwitchError(context: string, error: unknown) {
+  if (error instanceof Error) {
+    console.error(`[twitch:${context}] ${error.message}`);
+    return;
+  }
+
+  console.error(`[twitch:${context}] Unknown Twitch error`);
 }
